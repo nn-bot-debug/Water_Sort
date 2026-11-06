@@ -11,7 +11,6 @@ export default function GameScreen() {
     <main className="screen">
       <Hud
         levelId={game.levelId}
-        moves={game.moves}
         canUndo={game.canUndo}
         busy={game.status === 'pouring'}
         onUndo={game.undo}
