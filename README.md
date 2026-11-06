@@ -1,16 +1,23 @@
-# React + Vite
+# Water Sort
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A small Water Sort puzzle built with React and Vite.
 
-Currently, two official plugins are available:
+![Water Sort screenshot](docs/screenshot.png)
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+## How to play
 
-## React Compiler
+- Click a tube to pick it up, then click another tube to pour into it.
+- You can only pour onto the same color, or into an empty tube, and only while there is room.
+- The level is solved when every tube holds a single color (or is empty).
+- **Restart** resets the current level. **Skip** moves on to the next one.
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+The first four levels are hand-made. After that, puzzles are generated randomly and checked to be solvable.
 
-## Expanding the ESLint configuration
+## Run locally
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+```bash
+npm install
+npm run dev
+```
+
+Then open http://localhost:5173.
