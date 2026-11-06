@@ -10,7 +10,6 @@ function loadLevel(levelId) {
     initial,
     selected: null,
     moves: 0,
-    history: [],
     status: 'idle',
     pour: null,
     reject: null,
@@ -24,7 +23,6 @@ function commit(state, from, to) {
   return {
     ...state,
     tubes: result.tubes,
-    history: [...state.history, state.tubes],
     moves: state.moves + 1,
     selected: null,
     pour: null,
@@ -71,23 +69,10 @@ function reducer(state, action) {
     }
     case 'clearReject':
       return state.reject ? { ...state, reject: null } : state
-    case 'undo': {
-      if (state.status === 'pouring' || state.history.length === 0) return state
-      return {
-        ...state,
-        tubes: state.history[state.history.length - 1],
-        history: state.history.slice(0, -1),
-        moves: state.moves - 1,
-        selected: null,
-        reject: null,
-        status: 'idle',
-      }
-    }
     case 'restart':
       return {
         ...state,
         tubes: cloneTubes(state.initial),
-        history: [],
         moves: 0,
         selected: null,
         reject: null,
@@ -114,7 +99,6 @@ export function useWaterSort() {
   )
   const finishPour = useCallback(() => dispatch({ type: 'pourEnd' }), [])
   const clearReject = useCallback(() => dispatch({ type: 'clearReject' }), [])
-  const undo = useCallback(() => dispatch({ type: 'undo' }), [])
   const restart = useCallback(() => dispatch({ type: 'restart' }), [])
   const next = useCallback(() => dispatch({ type: 'next' }), [])
 
@@ -127,11 +111,9 @@ export function useWaterSort() {
 
   return {
     ...state,
-    canUndo: state.status !== 'pouring' && state.history.length > 0,
     tap,
     finishPour,
     clearReject,
-    undo,
     restart,
     next,
   }

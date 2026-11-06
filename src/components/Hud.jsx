@@ -1,4 +1,4 @@
-export default function Hud({ levelId, canUndo, busy, onUndo, onRestart, onNext }) {
+export default function Hud({ levelId, busy, onRestart, onNext }) {
   return (
     <header className="hud">
       <div className="hud__title">
@@ -6,9 +6,6 @@ export default function Hud({ levelId, canUndo, busy, onUndo, onRestart, onNext 
         <p className="hud__meta">Level {levelId + 1}</p>
       </div>
       <div className="hud__actions">
-        <button type="button" className="btn" onClick={onUndo} disabled={!canUndo}>
-          Undo
-        </button>
         <button type="button" className="btn" onClick={onRestart} disabled={busy}>
           Restart
         </button>
