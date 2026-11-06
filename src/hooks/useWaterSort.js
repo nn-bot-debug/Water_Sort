@@ -1,7 +1,8 @@
-import { useCallback, useEffect, useReducer } from 'react'
+import { useCallback, useEffect, useReducer, useRef } from 'react'
 import { POUR_BASE_MS, POUR_PER_UNIT_MS } from '../game/constants.js'
 import { applyPour, cloneTubes, isWon, pourSize, topColor } from '../game/logic.js'
 import { getLevel } from '../game/levels.js'
+import { playPour, playSolve } from '../game/pourSound.js'
 
 function loadLevel(levelId) {
   const initial = getLevel(levelId)
@@ -92,17 +93,44 @@ function prefersReducedMotion() {
 
 export function useWaterSort() {
   const [state, dispatch] = useReducer(reducer, 0, loadLevel)
+  const stateRef = useRef(state)
+  stateRef.current = state
 
-  const tap = useCallback(
-    (index) => dispatch({ type: 'tap', index, instant: prefersReducedMotion() }),
-    [],
-  )
+  const tap = useCallback((index) => {
+    const current = stateRef.current
+    const instant = prefersReducedMotion()
+    if (
+      current.status === 'idle' &&
+      current.selected !== null &&
+      current.selected !== index
+    ) {
+      const count = pourSize(current.tubes, current.selected, index)
+      if (count > 0) {
+        const duration = instant
+          ? 260
+          : POUR_BASE_MS + POUR_PER_UNIT_MS * (count - 1)
+        playPour(duration)
+      }
+    }
+    dispatch({ type: 'tap', index, instant })
+  }, [])
   const finishPour = useCallback(() => dispatch({ type: 'pourEnd' }), [])
   const clearReject = useCallback(() => dispatch({ type: 'clearReject' }), [])
   const restart = useCallback(() => dispatch({ type: 'restart' }), [])
   const next = useCallback(() => dispatch({ type: 'next' }), [])
 
-  const { pour } = state
+  const { pour, status } = state
+  const solvePlayed = useRef(false)
+  useEffect(() => {
+    if (status !== 'won') {
+      solvePlayed.current = false
+      return
+    }
+    if (solvePlayed.current) return
+    solvePlayed.current = true
+    playSolve()
+  }, [status])
+
   useEffect(() => {
     if (!pour) return
     const id = setTimeout(finishPour, pour.duration + 150)
